@@ -1,4 +1,4 @@
-package myChess;
+package chess;
 
 public class Position implements chess.ChessPosition {
 

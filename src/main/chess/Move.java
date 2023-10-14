@@ -1,8 +1,4 @@
-package myChess;
-
-import chess.ChessMove;
-import chess.ChessPiece;
-import chess.ChessPosition;
+package chess;
 
 public class Move implements ChessMove {
     private ChessPosition startPosition;

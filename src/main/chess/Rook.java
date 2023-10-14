@@ -1,9 +1,4 @@
-package myChess;
-
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessMove;
-import chess.ChessPosition;
+package chess;
 
 import java.util.Collection;
 import java.util.HashSet;

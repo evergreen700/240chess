@@ -1,15 +1,10 @@
-package myChess;
-
-import chess.*;
+package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
 
-import chess.InvalidMoveException;
-
 import static chess.ChessGame.TeamColor.*;
 import static chess.ChessPiece.PieceType.*;
-import static chess.ChessPiece.PieceType;
 
 public class Game implements ChessGame {
 

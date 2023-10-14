@@ -1,6 +1,4 @@
-package myChess;
-
-import chess.*;
+package chess;
 
 import java.util.Collection;
 import java.util.HashSet;
