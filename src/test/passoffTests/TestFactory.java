@@ -1,7 +1,6 @@
 package passoffTests;
 
 import chess.*;
-import myChess.*;
 
 import static chess.ChessPiece.PieceType.*;
 import static chess.ChessPiece.PieceType.KING;
