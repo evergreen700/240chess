@@ -63,8 +63,25 @@ public class UserDAO {
      * @return Returns a new ServerUser object
      */
     public ServerUser find(String username) throws DataAccessException{
-        ServerUser result = getQuery("SELECT * FROM chess.users WHERE Username = '"+username+"';", new Database());
-        return result;
+        var conn = new Database().getConnection();
+        try (var preparedStatement = conn.prepareStatement("SELECT * FROM chess.users WHERE Username = ?;")){
+            preparedStatement.setString(1,username);
+             var results = preparedStatement.executeQuery();
+            if (results.next()){
+                String upword = results.getString(2);
+                String uemail = results.getString(3);
+                new Database().returnConnection(conn);
+                return new ServerUser(username, upword, uemail);
+            }else{
+                new Database().returnConnection(conn);
+                return null;
+            }
+        } catch (java.sql.SQLException ex) {
+            new Database().returnConnection(conn);
+            throw new DataAccessException(ex.toString());
+        } finally {
+            new Database().returnConnection(conn);
+        }
     }
 
     /**
