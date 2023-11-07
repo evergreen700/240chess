@@ -32,7 +32,7 @@ public class Database {
 
     private static final String CONNECTION_URL = "jdbc:mysql://localhost:3306";
 
-    private final LinkedList<Connection> connections = new LinkedList<>();
+    static private final LinkedList<Connection> connections = new LinkedList<>();
 
     /**
      * Get a connection to the database. This pulls a connection out of a simple

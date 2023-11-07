@@ -10,10 +10,6 @@ import java.util.Arrays;
  * Contains the services for creating, joining, and listing all games.
  */
 public class GameService {
-    /**
-     * A counter used to make sure game ids are unique.
-     */
-    private static int numGames = 1;
 
     /**
      * Creates a new game with a given name.
@@ -22,7 +18,7 @@ public class GameService {
      */
     public baseResponse createGame(baseRequest req){
         baseResponse res = new baseResponse();
-        ServerGame newGame = new ServerGame(numGames);
+        ServerGame newGame = new ServerGame();
         if(req.gameName != null){
             newGame.setName(req.gameName);
         }
@@ -38,14 +34,13 @@ public class GameService {
             return res;
         }
         try{
-            new GameDAO().insert(newGame);
+            newGame.setGameID(new GameDAO().insert(newGame));
         }catch(DataAccessException exception){
             res.message = "Error: bad request";
             return res;
         }finally{
             gameResponse resg = new gameResponse();
-            resg.gameID = numGames;
-            numGames++;
+            resg.gameID = newGame.getGameID();
             return resg;
         }
     }
@@ -69,7 +64,13 @@ public class GameService {
             res.message = "Error: unauthorized";
             return res;
         }
-        ServerGame currentGame = new GameDAO().find(req.gameID);
+        ServerGame currentGame = null;
+        try{
+            currentGame = new GameDAO().find(req.gameID);
+        } catch(DataAccessException e){
+            res.message = "Error: description";
+            return res;
+        }
         if(currentGame == null){
             //If the gameID doesn't match up with a game or wasn't attached at all
             res.message = "Error: bad request";
@@ -80,6 +81,7 @@ public class GameService {
                 if (currentGame.getWhiteUsername() != null && !currentGame.getWhiteUsername().equals(token.getUsername())) {
                     //If the white color is already taken
                     res.message = "Error: already taken";
+                    return res;
                 } else {
                     //If the white color is not taken
                     currentGame.setWhiteUsername(token.getUsername());
@@ -89,6 +91,7 @@ public class GameService {
                 if (currentGame.getBlackUsername()!=null && !currentGame.getBlackUsername().equals(token.getUsername())){
                     //If the black color is already taken
                     res.message = "Error: already taken";
+                    return res;
                 }else{
                     //If the black color is not taken
                     currentGame.setBlackUsername(token.getUsername());
@@ -124,19 +127,18 @@ public class GameService {
             res.message = "Error: unauthorized";
             return res;
         }
-        ServerGame[] allGames = new GameDAO().findAll();
-        ArrayList<baseResponse.gameInfo> gameList = new ArrayList<baseResponse.gameInfo>();
-        for(ServerGame sg: allGames){
-            gameList.add(new baseResponse.gameInfo(sg));
+        ServerGame[] allGames;
+        try{
+            allGames = new GameDAO().findAll();
+            ArrayList<baseResponse.gameInfo> gameList = new ArrayList<baseResponse.gameInfo>();
+            for (ServerGame sg : allGames) {
+                gameList.add(new baseResponse.gameInfo(sg));
+            }
+            res.games = Arrays.copyOf(gameList.toArray(), gameList.size(), baseResponse.gameInfo[].class);
+            return res;
+        }catch(DataAccessException e){
+            res.message = "Error: description";
+            return res;
         }
-        res.games = Arrays.copyOf(gameList.toArray(),gameList.size(), baseResponse.gameInfo[].class);
-        return res;
-    }
-
-    /**
-     * Resets the counter (used when the database is cleared)
-     */
-    public void resetGameCount(){
-        numGames=1;
     }
 }

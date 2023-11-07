@@ -23,18 +23,10 @@ public class UserAuthService {
             try{
                 new UserDAO().insert(new ServerUser(req.username, req.password, req.email));
                 ServerAuthToken userToken = new ServerAuthToken(req.username, UUID.randomUUID().toString());
-                while(new AuthTokenDAO().find(userToken.getAuthToken())!=null){
-                    userToken = new ServerAuthToken(req.username, UUID.randomUUID().toString());
-                }
-                try{
-                    new AuthTokenDAO().insert(userToken);
-                    res.username = userToken.getUsername();
-                    res.authToken = userToken.getAuthToken();
-                    return res;
-                }catch(DataAccessException exception){
-                    res.message = "Error: description";
-                    return res;
-                }
+                new AuthTokenDAO().insert(userToken);
+                res.username = userToken.getUsername();
+                res.authToken = userToken.getAuthToken();
+                return res;
             }catch(DataAccessException exception){
                 res.message = "Error: already taken";
                 return res;
@@ -57,7 +49,7 @@ public class UserAuthService {
             try{
                 userInfo = new UserDAO().find(req.username);
             }catch(DataAccessException e){
-                res.message = "Error: Description";
+                res.message = "Error: description";
             }
             if (userInfo == null) {
                 res.message = "Error: unauthorized";

@@ -1,46 +1,12 @@
 package dataAccess;
 import serverModels.*;
 
-import java.sql.ResultSet;
-import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Data Access Object used to manipulate and access user records within the database.
  */
 public class UserDAO {
-    /*private static HashMap<String, ServerUser> userStorage = new HashMap<>();
-    private static HashSet<String> emailList = new HashSet<>();
-*/
-    private ServerUser getQuery(String selectStatement, Database db) throws DataAccessException{
-      var conn = db.getConnection();
-      try (var preparedStatement = conn.prepareStatement(selectStatement);
-        var results = preparedStatement.executeQuery()) {
-          if (results.next()){
-              String uname = results.getString(1);
-              String upword = results.getString(2);
-              String uemail = results.getString(3);
-              return new ServerUser(uname, upword, uemail);
-          }else{
-              return null;
-          }
-      } catch (java.sql.SQLException ex) {
-          throw new DataAccessException(ex.toString());
-      } finally {
-          db.returnConnection(conn);
-      }
-    }
 
-    private boolean putObject(String insertStatement, Database db) throws DataAccessException{
-      var conn = db.getConnection();
-      try (var preparedStatement = conn.prepareStatement(insertStatement)) {
-          return preparedStatement.execute();
-      } catch (java.sql.SQLException ex) {
-          throw new DataAccessException(ex.toString());
-      } finally {
-          db.returnConnection(conn);
-      }
-    }
     /**
      * Adds new user to the database.
      * @param newUser The ServerUser object to store in the database
@@ -50,10 +16,18 @@ public class UserDAO {
         ServerUser existingUser = find(newUser.getUsername());
         if(existingUser!=null){
             throw new DataAccessException("Username already in use");
-        }/*else if(emailList.contains(newUser.getEmail())){
-            throw new DataAccessException("Email already in use");
-        }*/else {
-            putObject("INSERT INTO chess.users(Username, Password, Email) VALUES('"+newUser.getUsername()+"','"+newUser.getPassword()+"','"+newUser.getEmail()+"');", new Database());
+        }else {
+            var conn = new Database().getConnection();
+            try (var preparedStatement = conn.prepareStatement("INSERT INTO chess.users(Username, Password, Email) VALUES(?,?,?)")) {
+                preparedStatement.setString(1,newUser.getUsername());
+                preparedStatement.setString(2,newUser.getPassword());
+                preparedStatement.setString(3,newUser.getEmail());
+                preparedStatement.execute();
+            } catch (java.sql.SQLException ex) {
+                throw new DataAccessException(ex.toString());
+            } finally {
+                new Database().returnConnection(conn);
+            }
         }
     }
 
@@ -61,6 +35,7 @@ public class UserDAO {
      * Finds the user with the corresponding username in the database. If the name is not currently in use returns null.
      * @param username The username associated with the user account
      * @return Returns a new ServerUser object
+     * @throws DataAccessException Could not connect to mySQL server
      */
     public ServerUser find(String username) throws DataAccessException{
         var conn = new Database().getConnection();
@@ -86,8 +61,16 @@ public class UserDAO {
 
     /**
      * Removes all user entries from the database
+     * @throws DataAccessException Could not find mySQL server
      */
     public void deleteAll() throws DataAccessException{
-        putObject("DELETE FROM chess.users", new Database());
+        var conn = new Database().getConnection();
+        try (var preparedStatement = conn.prepareStatement("DELETE FROM chess.users")) {
+            preparedStatement.execute();
+        } catch (java.sql.SQLException ex) {
+            throw new DataAccessException(ex.toString());
+        } finally {
+            new Database().returnConnection(conn);
+        }
     }
 }

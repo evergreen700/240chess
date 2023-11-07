@@ -32,11 +32,17 @@ public class ServerGame {
 
     /**
      * Generates a new ServerGame object with a given gameID.
-     * @param gameID: Unique identification code used to reference the game
      */
-    public ServerGame(int gameID){
-        this.gameID = gameID;
+    public ServerGame(){
+        this.gameID = 0;
         game = new chess.Game();
+    }
+    public ServerGame(int gameID, String whiteUsername, String blackUsername, String gameName, Game game){
+        this.gameID = gameID;
+        this.whiteUsername = whiteUsername;
+        this.blackUsername = blackUsername;
+        this.gameName = gameName;
+        this.game = game;
     }
 
     public int getGameID(){
@@ -57,14 +63,16 @@ public class ServerGame {
         return game;
     }
 
+    public void setGameID(int gameID){this.gameID = gameID;}
+
     public void setWhiteUsername(String white){
         this.whiteUsername = white;
     }
-
     public void setBlackUsername(String black){
         this.blackUsername = black;
     }
     public void setName(String name){
         this.gameName = name;
     }
+
 }

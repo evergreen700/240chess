@@ -1,7 +1,6 @@
 package dataAccess;
 import serverModels.*;
 import java.util.HashMap;
-import java.sql.*;
 
 /**
  * Data Access Object for manipulating and accessing AuthToken records
@@ -57,6 +56,7 @@ public class AuthTokenDAO {
      * Searches the database for a given AuthToken to validate user actions (create game, join game, list games, etc)
      * @param token The AuthToken being checked
      * @return The AuthToken object if it exists, null if not.
+     * @throws DataAccessException Could not connect to mySQL server
      */
     public ServerAuthToken find(String token) throws DataAccessException{
         var conn = new Database().getConnection();
@@ -78,6 +78,7 @@ public class AuthTokenDAO {
 
     /**
      * Removes all authToken entries from the database
+     * @throws DataAccessException Could not connect to mySQL server
      */
     public void deleteAll() throws DataAccessException{
         var conn = new Database().getConnection();

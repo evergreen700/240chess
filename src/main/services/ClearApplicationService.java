@@ -17,7 +17,6 @@ public class ClearApplicationService {
         try{
             new AuthTokenDAO().deleteAll();
             new GameDAO().deleteAll();
-            new GameService().resetGameCount();
             new UserDAO().deleteAll();
             return new baseResponse();
         }catch(DataAccessException e){

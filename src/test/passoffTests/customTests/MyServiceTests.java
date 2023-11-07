@@ -11,7 +11,7 @@ import services.UserAuthService;
 
 @SuppressWarnings("unused")
 
-public class MyServerTests {
+public class MyServiceTests {
 
     private static TestModels.TestUser existingUser;
     private static TestModels.TestUser newUser;
