@@ -33,6 +33,7 @@ public class ServerGame {
     /**
      * Generates a new ServerGame object with a given gameID.
      */
+
     public ServerGame(){
         this.gameID = 0;
         game = new chess.Game();

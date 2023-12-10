@@ -28,7 +28,7 @@ public class GameDAO {
             preparedStatement.setString(1,game.getWhiteUsername());
             preparedStatement.setString(2,game.getBlackUsername());
             preparedStatement.setString(3,game.getGameName());
-            preparedStatement.setString(4,new Gson().toJson(game.getGame()));
+            preparedStatement.setString(4,Game.serializer().toJson(game.getGame()));
             if(preparedStatement.executeUpdate() == 1) {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
                     generatedKeys.next();
@@ -60,7 +60,7 @@ public class GameDAO {
             preparedStatement.setString(1,game.getWhiteUsername());
             preparedStatement.setString(2,game.getBlackUsername());
             preparedStatement.setString(3,game.getGameName());
-            preparedStatement.setString(4,"{}");
+            preparedStatement.setString(4,Game.serializer().toJson(game.getGame()));
             preparedStatement.execute();
         } catch (java.sql.SQLException ex) {
             throw new DataAccessException(ex.toString());

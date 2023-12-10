@@ -1,6 +1,12 @@
 package reqRes;
 
+import chess.Board;
+import chess.Game;
+import chess.Piece;
+import com.google.gson.*;
 import serverModels.ServerGame;
+
+import java.lang.reflect.Type;
 
 /**
  * Basic response object used to respond to the HTTP requests
@@ -60,6 +66,17 @@ public class baseResponse {
             this.whiteUsername = sg.getWhiteUsername();
             this.blackUsername = sg.getBlackUsername();
             this.gameName = sg.getGameName();
+        }
+    }
+    public static Gson serializer(){
+        GsonBuilder gsonBuilder = new GsonBuilder();
+        gsonBuilder.registerTypeAdapter(gameInfo.class, new baseResponse.GameInfoAdapter());
+        return gsonBuilder.create();
+    }
+    public static class GameInfoAdapter implements JsonDeserializer<gameInfo> {
+        public baseResponse.gameInfo deserialize(JsonElement el, Type type, JsonDeserializationContext ctx){
+            var newGameInfo = new Gson().fromJson(el, gameInfo.class);
+            return newGameInfo;
         }
     }
 }

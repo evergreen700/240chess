@@ -12,7 +12,7 @@ import static chess.ChessPiece.PieceType.*;
 public class Game implements ChessGame {
 
     public Board gameBoard;
-    private boolean[] castleStatuses;
+    public boolean active;
     private Board deepCopyBoard(){
         Board boardCopy = new Board();
         for(int i=1;i<=8;i++){
@@ -29,7 +29,7 @@ public class Game implements ChessGame {
         currentTurn = WHITE;
         gameBoard = new Board();
         gameBoard.resetBoard();
-        castleStatuses = new boolean[]{true,true,true,true,true,true};
+        active = true;
     }
     //enum TeamColor {White, Black};
     /**
@@ -134,19 +134,7 @@ public class Game implements ChessGame {
             Board backupCopy = deepCopyBoard();
             gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
             gameBoard.addPiece(move.getStartPosition(), null);
-            if (move.getStartPosition().equals(new Position(1,1))){
-                castleStatuses[0] = false;
-            }else if (move.getStartPosition().equals(new Position(1,5))){
-                castleStatuses[1] = false;
-            }else if (move.getStartPosition().equals(new Position(1,8))){
-                castleStatuses[2] = false;
-            }else if (move.getStartPosition().equals(new Position(8,1))){
-                castleStatuses[3] = false;
-            }else if (move.getStartPosition().equals(new Position(8,5))){
-                castleStatuses[4] = false;
-            }else if (move.getStartPosition().equals(new Position(8,8))){
-                castleStatuses[5] = false;
-            }
+
             if(move.getPromotionPiece() != null){
                 switch(move.getPromotionPiece()){
                     case ROOK:
@@ -262,7 +250,6 @@ public class Game implements ChessGame {
     @Override
     public void setBoard(ChessBoard board) {
         gameBoard = (Board) board;
-        castleStatuses = new boolean[]{true,true,true,true,true,true};
     }
 
     /**

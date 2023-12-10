@@ -1,10 +1,29 @@
 package server;
+import com.google.gson.Gson;
+import dataAccess.AuthTokenDAO;
+import dataAccess.GameDAO;
+import org.eclipse.jetty.websocket.api.Session;
+import org.eclipse.jetty.websocket.api.annotations.*;
+import org.eclipse.jetty.websocket.api.*;
+import serverModels.ServerAuthToken;
 import spark.*;
+import webSocketHandlers.webSocketHandler;
+import webSocketMessages.serverMessages.ErrorMessage;
+import webSocketMessages.serverMessages.LoadMessage;
+import webSocketMessages.serverMessages.NotifyMessage;
+import webSocketMessages.userCommands.JoinPCommand;
+import webSocketMessages.userCommands.MoveCommand;
+import webSocketMessages.userCommands.SimpleCommand;
+import webSocketMessages.userCommands.UserGameCommand;
+
 import java.util.Map;
+
+import static webSocketMessages.userCommands.UserGameCommand.CommandType.JOIN_PLAYER;
 
 /**
  * Chess server object that takes in HTTP requests and passes JavaSpark objects to the handlers
  */
+//@WebSocket
 public class ChessServer {
     /**
      * Map used to match up error messages to status codes
@@ -37,6 +56,7 @@ public class ChessServer {
         Spark.port(8080);
         System.out.println("Listening on port 8080");
         Spark.externalStaticFileLocation("src/web");
+        Spark.webSocket("/connect", webSocketHandler.class);
         new ChessServer().createRoutes();
     }
 
