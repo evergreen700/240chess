@@ -64,43 +64,10 @@ public class Game implements ChessGame {
         for (ChessMove i : first){
             Move testMove = (Move) i;
             Board tempCopy = deepCopyBoard();
-            gameBoard.addPiece(testMove.getEndPosition(), gameBoard.getPiece(testMove.getStartPosition()));
-            gameBoard.addPiece(testMove.getStartPosition(), null);
-            if(!isInCheck(tempCopy.getPiece(startPosition).getTeamColor())){
+            tempCopy.addPiece(testMove.getEndPosition(), tempCopy.getPiece(testMove.getStartPosition()));
+            tempCopy.addPiece(testMove.getStartPosition(), null);
+            if(!isInCheck(gameBoard.getPiece(startPosition).getTeamColor())){
                 last.add(testMove);
-            }
-            gameBoard = tempCopy;
-        }
-        if(startPosition.equals(new Position(1,5)) && !isInCheck(WHITE)){
-            if(gameBoard.getPiece(startPosition) == null && gameBoard.getPiece(startPosition).getPieceType() == KING && gameBoard.getPiece(new Position(1,1)) == null && gameBoard.getPiece(startPosition).getPieceType() == ROOK){
-                King testKing = (King) gameBoard.getPiece(startPosition);
-                Rook testRook = (Rook) gameBoard.getPiece(new Position(1,1));
-                if (testKing.CastlePotential && testRook.CastlePotential && last.contains(new Move(startPosition, new Position(1,4), null))){
-                    boolean CanCastle = true;
-                    for(int i = 2; i<5; i++){
-                        if(gameBoard.getPiece(new Position(1,i)) != null){
-                            CanCastle = false;
-                        }
-                    }
-                    if (CanCastle){
-                        first.add(new Move(startPosition, new Position(1,3), null));
-                    }
-                }
-            }
-            if(gameBoard.getPiece(startPosition) == null && gameBoard.getPiece(startPosition).getPieceType() == KING && gameBoard.getPiece(new Position(1,8)) == null && gameBoard.getPiece(startPosition).getPieceType() == ROOK){
-                King testKing = (King) gameBoard.getPiece(startPosition);
-                Rook testRook = (Rook) gameBoard.getPiece(new Position(1,8));
-                if (testKing.CastlePotential && testRook.CastlePotential && last.contains(new Move(startPosition, new Position(1,6), null))){
-                    boolean CanCastle = true;
-                    for(int i = 6; i<8; i++){
-                        if(gameBoard.getPiece(new Position(1,i)) != null){
-                            CanCastle = false;
-                        }
-                    }
-                    if (CanCastle){
-                        first.add(new Move(startPosition, new Position(1,7), null));
-                    }
-                }
             }
         }
         return last;
@@ -131,7 +98,6 @@ public class Game implements ChessGame {
             throw new InvalidMoveException(currentPiece.getPieceType() + " at " + move.getStartPosition().toString() + " has no valid moves");
         }
         if(possibleMoves.contains(move)){
-            Board backupCopy = deepCopyBoard();
             gameBoard.addPiece(move.getEndPosition(), gameBoard.getPiece(move.getStartPosition()));
             gameBoard.addPiece(move.getStartPosition(), null);
 

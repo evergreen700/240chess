@@ -75,11 +75,9 @@ public class userScreen {
                     System.out.println("Joining game "+gameList[gameRank-1].gameName);
 
                     if (server.joinGame(auth,gameList[gameRank-1].gameID,playerColor)){
-                        webSocketFacade socketServer = new webSocketFacade("localhost", "8080");
+                        webSocketFacade socketServer = new webSocketFacade("localhost", "8080", teamColor);
                         System.out.println("Successfully joined game "+gameList[gameRank-1].gameName + " as " + playerColor);
-                        socketServer.sendCommand(new JoinPCommand(auth, gameList[gameRank-1].gameID, teamColor));
                         gamePlayScreen.gamePlayLoop(uIn, server, socketServer, user, auth, gameList[gameRank-1].gameID, teamColor);
-                        new boardDrawer().drawBoard(new Game().getBoard(), teamColor);
                     }else{
                         System.out.println(playerColor + " is already taken for game "+gameList[gameRank-1].gameName);
                     }
@@ -99,11 +97,10 @@ public class userScreen {
                         continue;
                     }
                     if (server.joinGame(auth,gameList[gameRank-1].gameID, null)){
-                        webSocketFacade socketServer = new webSocketFacade("localhost", "8080");
+                        webSocketFacade socketServer = new webSocketFacade("localhost", "8080", null);
                         System.out.println("Successfully joined game "+gameList[gameRank-1].gameName + " as a spectator");
                         socketServer.sendCommand(new SimpleCommand(UserGameCommand.CommandType.JOIN_OBSERVER, auth, gameList[gameRank-1].gameID));
                         gamePlayScreen.gamePlayLoop(uIn, server, socketServer, user, auth, gameList[gameRank-1].gameID, null);
-                        new boardDrawer().drawBoard(new Game().getBoard(), ChessGame.TeamColor.WHITE);
                     }else{
                         System.out.println("Something went wrong");
                     }
@@ -117,7 +114,7 @@ public class userScreen {
         }
     }
     private static void printHelp(){
-        System.out.println("LOGIN HELP");
+        System.out.println("USER HELP");
         System.out.println(SET_TEXT_COLOR_GREEN+"create <GAME_NAME>"+SET_TEXT_COLOR_WHITE+" - Creates new game with given name");
         System.out.println(SET_TEXT_COLOR_GREEN+"list"+SET_TEXT_COLOR_WHITE+" - Lists all games");
         System.out.println(SET_TEXT_COLOR_GREEN+"join <GAMEID> <PLAYER_COLOR>"+SET_TEXT_COLOR_WHITE+" - Joins a game as a player");

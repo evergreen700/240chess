@@ -94,10 +94,20 @@ public class webSocketHandler {
                     }
                     try{
                         game.getGame().makeMove(mm.move);
+                        if(game.getGame().isInCheckmate(game.getGame().getTeamTurn())){
+                            nm = new NotifyMessage(auth.getUsername() + " put the other player in checkmate, winning the game.");
+                            game.getGame().active = false;
+                        }else if(game.getGame().isInStalemate(game.getGame().getTeamTurn())){
+                            nm = new NotifyMessage(auth.getUsername() + " put the other player in stalemate, tying the game.");
+                            game.getGame().active = false;
+                        }else if(game.getGame().isInCheck(game.getGame().getTeamTurn())){
+                            nm = new NotifyMessage(auth.getUsername() + " put the other player in check!");
+                        }else{
+                            nm = new NotifyMessage(auth.getUsername() + " made a move.");
+                        }
                         new GameDAO().update(game);
                         lm = new LoadMessage(new GameDAO().find(mm.gameID).getGame());
                         connections.sendAll(new Gson().toJson(lm));
-                        nm = new NotifyMessage(auth.getUsername() + " made a move.");
                         connections.broadcast(auth.getUsername(), new Gson().toJson(nm));
                     }catch(InvalidMoveException e){
                         ErrorMessage em = new ErrorMessage("Error: Bad move: "+ e.getMessage());
@@ -124,6 +134,12 @@ public class webSocketHandler {
                     break;
                 case LEAVE:
                     SimpleCommand vm = new Gson().fromJson(message, SimpleCommand.class);
+                    if(game.getWhiteUsername().equals(auth.getUsername())){
+                        game.setWhiteUsername(null);
+                    }else if(game.getBlackUsername().equals(auth.getUsername())){
+                        game.setBlackUsername(null);
+                    }
+                    new GameDAO().update(game);
                     nm = new NotifyMessage(auth.getUsername() + " left the game.");
                     connections.broadcast(auth.getUsername(), new Gson().toJson(nm));
                     connections.remove(auth.getUsername());
